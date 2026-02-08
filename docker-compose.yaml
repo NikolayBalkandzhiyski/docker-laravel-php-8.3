@@ -34,7 +34,7 @@ services:
     container_name: laravel-mysql
     restart: unless-stopped
     ports:
-      - "3307:3306"
+      - "3306:3306"
     environment:
       MYSQL_DATABASE: laravel
       MYSQL_ROOT_PASSWORD: password
@@ -53,10 +53,13 @@ services:
       - laravel
 
   mailhog:
-    image: 'mailhog/mailhog:latest'
+    image: mailhog/mailhog:latest
+    container_name: laravel-mailhog
     ports:
-        - '${FORWARD_MAILHOG_PORT:-1025}:1025'
-        - '${FORWARD_MAILHOG_DASHBOARD_PORT:-8025}:8025'
+      - "${FORWARD_MAILHOG_PORT:-1025}:1025"
+      - "${FORWARD_MAILHOG_DASHBOARD_PORT:-8025}:8025"
+    networks:
+      - laravel
 
 networks:
   laravel:

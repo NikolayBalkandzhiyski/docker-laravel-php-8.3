@@ -28,9 +28,7 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     zip \
     unzip \
-    curl \
-    supervisor \
-    --no-install-recommends
+    curl
 
 # Install ImageMagick PHP extension via PECL
 RUN pecl install imagick && docker-php-ext-enable imagick
@@ -48,7 +46,7 @@ RUN docker-php-ext-install \
     intl \
     zip
 
-
+RUN pecl install redis && docker-php-ext-enable redis
 RUN pecl install xdebug && docker-php-ext-enable xdebug
 
 
@@ -64,13 +62,7 @@ WORKDIR /var/www
 COPY . .
 RUN chown -R www-data:www-data /var/www/
 
-# Set up cron for Laravel scheduler
-RUN echo "* * * * * cd /var/www && php artisan schedule:run >> /dev/null 2>&1"
+USER www-data
 
-# use supervisor config
-COPY docker/worker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-RUN mkdir -p /var/log/supervisor
-
-# Start supervisor (must run as root so it can drop to www-data for worker processes)
 EXPOSE 9000
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+CMD ["php-fpm"]
