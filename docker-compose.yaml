@@ -52,6 +52,19 @@ services:
     networks:
       - laravel
 
+  node:
+    image: node:24-alpine
+    container_name: laravel-node
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./:/var/www
+    networks:
+      - laravel
+    working_dir: /var/www
+    command: sleep infinity
+
   mailhog:
     image: mailhog/mailhog:latest
     container_name: laravel-mailhog
